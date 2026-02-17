@@ -27,9 +27,8 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { useState } from "react"
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type User = {
   id: string
   amount: number
@@ -37,7 +36,10 @@ export type User = {
   email: string
 }
 
-export const columns: ColumnDef<User>[] = [
+export const columns = (
+  onDelete: (id: string) => void,
+  onEdit: (user: User) => void
+): ColumnDef<User>[] => [
     {
     id: "select",
     header: ({ table }) => (
@@ -90,62 +92,62 @@ export const columns: ColumnDef<User>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original
+      const user = row.original
+
+      const [editName, setEditName] = useState(user.username)
+      const [editEmail, setEditEmail] = useState(user.email)
  
+      const handleSave = () => {
+        onEdit({...user, username:editName, email:editEmail})
+      }
+
       return (
-        // <DropdownMenu>
-        //   <DropdownMenuTrigger asChild>
-        //     <Button variant="ghost" className="h-8 w-8 p-0">
-        //       <span className="sr-only">Open menu</span>
-        //       <MoreHorizontal className="h-4 w-4" />
-        //     </Button>
-        //   </DropdownMenuTrigger>
-        //   <DropdownMenuContent align="end">
-        //     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        //     <DropdownMenuItem>Edit</DropdownMenuItem>
-        //     <DropdownMenuSeparator />
-        //     <DropdownMenuItem>Delete</DropdownMenuItem>
-        //   </DropdownMenuContent>
-        // </DropdownMenu>
-        <Dialog>
-            <form>
-                <div className="flex items-center gap-2">
-                    <DialogTrigger asChild>
-                    <Button variant="outline">Edit</Button>
-                    </DialogTrigger>
-                    <Trash2 className="cursor-pointer text-red-500" />
+        <div className="">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Edit</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-sm">
+              <DialogHeader>
+                <DialogTitle>Edit User</DialogTitle>
+                <DialogDescription>
+                    Update your details below.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="username-edit" className="text-right">Username</Label>
+                  <Input 
+                    id="username-edit" 
+                    value={editName} 
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="col-span-3" 
+                  />
                 </div>
-                <DialogContent className="sm:max-w-sm">
-                <DialogHeader>
-                    <DialogTitle>Edit profile</DialogTitle>
-                    <DialogDescription>
-                    Make changes to your profile here. Click save when you&apos;re
-                    done.
-                    </DialogDescription>
-                </DialogHeader>
-                <FieldGroup>
-                    <Field>
-                    <Label htmlFor="name-1">Name</Label>
-                    <Input id="name-1" name="name" defaultValue="" />
-                    </Field>
-                    <Field>
-                    <Label htmlFor="username-1">Username</Label>
-                    <Input id="username-1" name="username" defaultValue="" />
-                    </Field>
-                    <Field>
-                    <Label htmlFor="id">ID</Label>
-                    <Input id="id" name="id" defaultValue="" />
-                    </Field>
-                </FieldGroup>
-                <DialogFooter>
-                    <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                    </DialogClose>
-                    <Button type="submit">Save changes</Button>
-                </DialogFooter>
-                </DialogContent>
-            </form>
-        </Dialog>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="email-edit" className="text-right">Email</Label>
+                  <Input 
+                    id="email-edit" 
+                    value={editEmail} 
+                    onChange={(e) => setEditEmail(e.target.value)} 
+                    className="col-span-3" 
+                  />
+                </div>
+              </div>
+
+              <DialogFooter>
+                <DialogClose asChild>
+                    <Button type="button" onClick={handleSave}>Save</Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          
+          <Button variant="ghost" size="icon" onClick={() => onDelete(user.id)}>
+            <Trash2 className="text-red-500" />
+          </Button>
+        </div>
       )
     },
   },

@@ -2,47 +2,47 @@
 
 import { useEffect, useState } from "react"
 import FieldInput from "../form"
-import { columns } from "./columns"
+import { columns , User } from "./columns"
 import { DataTable } from "./data-table"
 
-interface User {
-  id: string
-  username: string
-  email: string
-}
+export default function UserList() {
+  const [users, setUsers] = useState<User[]>([])
 
-export default function DemoPage() {
-  const [data, setData] = useState<User[]>([])
+  const handleAddUser = (newUser: User) => {
+    setUsers((prev) => [newUser, ...prev])
+  }
+  
+  const handleDeleteUser = (id: string) => {
+    setUsers((prev) => prev.filter((user) => user.id !== id))
+  }
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch("https://jsonplaceholder.typicode.com/users")
-        if (!res.ok) throw new Error(`Fetch failed: ${res.status}`)
-        const users = await res.json()
+  const handleEditUser = (updatedUser: User) => {
+    setUsers((prev) => 
+      prev.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+    )
+  }
 
-        const mappedUsers: User[] = users.map((user: any) => ({
-          id: user.id.toString(),
+  const getColumns = columns(handleDeleteUser, handleEditUser)
+  
+  useEffect(()=> {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then(response => response.json())
+      .then((users: any[]) => {
+        const mappedUsers: User[] = users.map((user) => ({
+          id: user.id,
           username: user.username,
-          email: user.email,
+          email:user.email
         }))
-
-        setData(mappedUsers)
-      } catch (error: any) {
-        console.error("Error fetching data:", error.message)
-      }
-    }
-
-    fetchData()
-  }, [])
-
+        setUsers(mappedUsers)
+      })
+  })
   return (
     <div>
       <div className="flex items-center justify-center m-4">
-        <FieldInput />    
+        <FieldInput onAddUser={handleAddUser}/>
       </div>
       <div className="container mx-auto py-10">
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={getColumns} data={users} />
       </div>
     </div>
   )

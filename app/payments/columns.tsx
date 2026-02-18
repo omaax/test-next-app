@@ -64,28 +64,28 @@ export const columns = (
     enableSorting: false,
     enableHiding: false,
   },
-    {
+  {
     accessorKey: "username",
     header: "Username",
   },
   {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "id",
+accessorKey: "email",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          ID
+          Email
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
-   },
+  },
+  {
+    accessorKey: "id",
+    header: "ID",
+  },
 
 //   {
 //     accessorKey: "amount",

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import FieldInput from "../form"
 import { columns , User } from "./columns"
 import { DataTable } from "./data-table"
+import PagePagination from "../pagination"
 
 export default function UserList() {
   const [users, setUsers] = useState<User[]>([])
@@ -35,13 +36,13 @@ export default function UserList() {
         }))
         setUsers(mappedUsers)
       })
-  })
+  }, [])
   return (
     <div>
-      <div className="flex items-center justify-center m-4">
-        <FieldInput onAddUser={handleAddUser}/>
-      </div>
-      <div className="container mx-auto py-10">
+      <div className="relative container mx-auto py-10">
+        <div className="absolute right-5 top-28 z-10">
+          <FieldInput onAddUser={handleAddUser}/>
+        </div>
         <DataTable columns={getColumns} data={users} />
       </div>
     </div>

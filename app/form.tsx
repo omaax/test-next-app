@@ -11,6 +11,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { User } from "./payments/columns"
 import { useState } from "react"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Plus } from "lucide-react"
 
 
 interface FieldInputProps {
@@ -38,28 +40,68 @@ export function FieldInput({ onAddUser }: FieldInputProps) {
     setId("")
   }
   return (
-    <FieldSet className="w-full max-w-xs">
-      <FieldGroup>
-        <Field>
-          <FieldLabel htmlFor="username">Username</FieldLabel>
-          <Input id={username} onChange={(e) => setUsername(e.target.value)} type="text" placeholder="Username" />
-          <FieldDescription>
-            Choose a username for your account.
-          </FieldDescription>
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input value={email} onChange={(e) => setEmail(e.target.value)} />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="id">ID</FieldLabel>
-          <Input value={id} onChange={(e) => setId(e.target.value)} />
-        </Field>
-        <Field orientation="horizontal">
-            <Button type="submit" onClick={handleSubmit}>Submit</Button>
-          </Field>
-      </FieldGroup>
-    </FieldSet>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <Plus />
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Create account</DialogTitle>
+          <DialogDescription>
+            Fill in your details below.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="grid gap-4 py-4">
+          <div className="grid gap-2">
+            <label htmlFor="username" className="text-sm font-medium">
+              Username
+            </label>
+            <Input
+              id="username"
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <p className="text-sm text-muted-foreground">
+              Choose a username for your account.
+            </p>
+          </div>
+
+          <div className="grid gap-2">
+            <label htmlFor="email" className="text-sm font-medium">
+              Email
+            </label>
+            <Input
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <label htmlFor="id" className="text-sm font-medium">
+              ID
+            </label>
+            <Input
+              id="id"
+              value={id}
+              onChange={(e) => setId(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button type="submit" onClick={handleSubmit}>
+            Submit
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
 
